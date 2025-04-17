@@ -1,12 +1,18 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
-import { extname, join } from "https://deno.land/std@0.224.0/path/mod.ts";
+import { extname } from "https://deno.land/std@0.224.0/path/mod.ts";
 
-const BOOKS_DIR = "./Books";
-
-function getBookList(): string[] {
-  return Array.from(Deno.readDirSync(BOOKS_DIR))
-    .filter((entry) => entry.isFile && extname(entry.name) === ".pdf")
-    .map((entry) => entry.name);
+// Obtiene la lista de libros desde la API de GitHub
+async function getBookList(): Promise<string[]> {
+  const apiUrl =
+    "https://api.github.com/repos/Arhoc/HackingBooks/contents/Books";
+  const res = await fetch(apiUrl, {
+    headers: { "User-Agent": "Deno" },
+  });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data
+    .filter((entry: any) => entry.type === "file" && entry.name.endsWith(".pdf"))
+    .map((entry: any) => entry.name);
 }
 
 function escapeHtml(text: string): string {
@@ -19,13 +25,13 @@ async function handler(req: Request): Promise<Response> {
   const url = new URL(req.url);
 
   if (url.pathname === "/") {
-    const books = getBookList();
+    const books = await getBookList();
     const bookListHtml = books.map(
       (book) => `
         <li class="book-item">
           <div class="cover"><img data-title="${escapeHtml(book)}" src="/static/placeholder.png" alt="cover" loading="lazy"></div>
           <div class="meta">
-            <a href="/Books/${encodeURIComponent(book)}" download>${escapeHtml(book)}</a>
+            <a href="https://raw.githubusercontent.com/Arhoc/HackingBooks/main/Books/${encodeURIComponent(book)}" download>${escapeHtml(book)}</a>
           </div>
         </li>`
     ).join("");
@@ -53,23 +59,6 @@ async function handler(req: Request): Promise<Response> {
 </body>
 </html>`;
     return new Response(html, { headers: { "content-type": "text/html" } });
-  }
-
-  if (url.pathname.startsWith("/Books/")) {
-    const filePath = join(BOOKS_DIR, decodeURIComponent(url.pathname.replace("/Books/", "")));
-    try {
-      const file = await Deno.open(filePath, { read: true });
-      const stat = await Deno.stat(filePath);
-      return new Response(file.readable, {
-        headers: {
-          "content-type": "application/pdf",
-          "content-length": stat.size.toString(),
-          "content-disposition": `attachment; filename=\"${filePath.split("/").pop()}\"`,
-        },
-      });
-    } catch {
-      return new Response("File not found", { status: 404 });
-    }
   }
 
   if (url.pathname.startsWith("/static/")) {
