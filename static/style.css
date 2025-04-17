@@ -1,0 +1,89 @@
+body {
+  background: #181c20;
+  color: #e0e0e0;
+  font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  background: #111417;
+  padding: 2rem 0 1rem 0;
+  text-align: center;
+  box-shadow: 0 2px 8px #000a;
+}
+header h1 {
+  font-size: 2.5rem;
+  letter-spacing: 2px;
+  color: #00ffc8;
+  margin: 0;
+  font-weight: 800;
+  text-shadow: 0 2px 16px #00ffc855;
+}
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 0;
+}
+.book-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+  max-width: 700px;
+}
+.book-item {
+  display: flex;
+  align-items: center;
+  margin: 1.2rem 0;
+  background: #21262b;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #0002;
+  transition: background 0.2s;
+}
+.book-item:hover {
+  background: #282e34;
+}
+.book-item .cover {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1rem 0 0.5rem;
+}
+.book-item .cover img {
+  width: 64px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 5px;
+  background: #181c20;
+  box-shadow: 0 2px 8px #0004;
+}
+.book-item .meta {
+  flex: 1;
+  min-width: 0;
+}
+.book-item .meta a {
+  color: #00ffc8;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+  word-break: break-all;
+}
+.book-item .meta a:hover {
+  color: #fff;
+}
+footer {
+  background: #111417;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.95rem;
+  color: #555;
+  border-top: 1px solid #222;
+}
